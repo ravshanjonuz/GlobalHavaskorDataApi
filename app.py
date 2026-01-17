@@ -107,16 +107,8 @@ def download_data():
             as_attachment=True,
             download_name='data.zip'
         )
-    
-    if not os.path.exists(DATA_FILE):
-        return jsonify({'error': 'DATA fayli topilmadi'}), 404
-    
-    return send_file(
-        DATA_FILE,
-        mimetype='application/zip',
-        as_attachment=True,
-        download_name='data.zip'
-    )
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 @app.route('/api/check', methods=['GET'])
 def check_license():
