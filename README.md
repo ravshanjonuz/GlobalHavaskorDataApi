@@ -34,7 +34,7 @@ scp data.zip user@server:/var/www/globaltest/
 cat > .env << EOF
 DATA_FILE=/var/www/globaltest/data.zip
 DATABASE=/var/www/globaltest/licenses.db
-API_SECRET=sizning-maxfiy-kalitingiz-buni-ozgartiring
+API_SECRET=GlobalTest2025SecretKey159
 EOF
 ```
 

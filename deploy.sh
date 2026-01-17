@@ -40,7 +40,7 @@ echo "[5/8] Environment sozlash..."
 cat > /var/www/globaltest/DataAPI/.env << 'EOF'
 DATA_FILE=/var/www/globaltest/data.zip
 DATABASE=/var/www/globaltest/licenses.db
-API_SECRET=GlobalTest2024SecretKey159
+API_SECRET=GlobalTest2025SecretKey159
 EOF
 
 # 6. Nginx konfiguratsiya
@@ -94,7 +94,7 @@ echo "O'rnatish tugadi!"
 echo "=========================================="
 echo ""
 echo "API URL: https://globalhavaskor.uz/api/health"
-echo "API Secret: GlobalTest2024SecretKey159"
+echo "API Secret: GlobalTest2025SecretKey159"
 echo ""
 echo "Tmux sessiyasini ko'rish: tmux attach -t globaltest-api"
 echo "Tmux dan chiqish: Ctrl+B, keyin D"

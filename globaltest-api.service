@@ -8,7 +8,7 @@ Group=www-data
 WorkingDirectory=/var/www/globaltest
 Environment="DATA_FILE=/var/www/globaltest/data.zip"
 Environment="DATABASE=/var/www/globaltest/licenses.db"
-Environment="API_SECRET=your-super-secret-key-change-this"
+Environment="API_SECRET=GlobalTest2025SecretKey159"
 ExecStart=/var/www/globaltest/venv/bin/gunicorn --workers 2 --bind 127.0.0.1:5000 app:app
 Restart=always
 
