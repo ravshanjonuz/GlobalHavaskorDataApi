@@ -14,7 +14,7 @@ CORS(app)
 # Konfiguratsiya
 DATA_FILE = os.environ.get('DATA_FILE', '/var/www/globaltest/data.zip')
 DATABASE = os.environ.get('DATABASE', '/var/www/globaltest/licenses.db')
-API_SECRET = os.environ.get('API_SECRET', 'your-super-secret-key-change-this')
+API_SECRET = os.environ.get('API_SECRET', 'GlobalTest2025SecretKey159')
 
 # ============= Database Functions =============
 
