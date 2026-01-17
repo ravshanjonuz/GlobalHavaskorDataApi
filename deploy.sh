@@ -21,10 +21,11 @@ cd /var/www/globaltest
 
 # 3. GitHub dan clone qilish
 echo "[3/8] GitHub dan yuklab olish..."
-if [ -d ".git" ]; then
+if [ -d "/var/www/globaltest/DataAPI" ]; then
+    cd /var/www/globaltest/DataAPI
     git pull
 else
-    git clone https://github.com/ravshanjonuz/GlobalTest.git .
+    git clone https://github.com/ravshanjonuz/GlobalHavaskorDataApi.git /var/www/globaltest/DataAPI
 fi
 
 # 4. Virtual environment
