@@ -73,6 +73,29 @@ def download_data():
     comp_id = request.args.get('compId', '').strip()
     key = request.args.get('key', '').strip()
     
+    # Agar compId va key bo'sh bo'lsa - ommaviy yuklab olishga ruxsat (boshlang'ich o'rnatish uchun)
+    if not comp_id and not key:
+        # Ommaviy download - faqat fayl mavjudligini tekshirish
+        if not os.path.exists(DATA_FILE):
+            return jsonify({'error': 'DATA fayli topilmadi'}), 404
+        
+        # Download statistikasini saqlash
+        conn = get_db()
+        conn.execute(
+            'INSERT INTO downloads (computer_id, ip_address) VALUES (?, ?)',
+            ('PUBLIC', request.remote_addr)
+        )
+        conn.commit()
+        conn.close()
+        
+        return send_file(
+            DATA_FILE,
+            mimetype='application/zip',
+            as_attachment=True,
+            download_name='data.zip'
+        )
+    
+    # Litsenziya bilan download
     if not comp_id or not key:
         return jsonify({'error': 'compId va key kerak'}), 400
     
