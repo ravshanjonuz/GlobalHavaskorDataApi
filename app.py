@@ -67,63 +67,46 @@ def require_api_key(f):
 
 # ============= Public Endpoints =============
 
-@app.route('/api/download', methods=['GET'])
+@app.route('/api/download', methods=['POST'])
 def download_data():
-    """DATA faylini yuklab olish (litsenziya tekshiruvi bilan)"""
-    comp_id = request.args.get('compId', '').strip()
-    key = request.args.get('key', '').strip()
+    # 1. Secret Key tekshirish (Header orqali)
+    client_secret = request.headers.get('X-Api-Secret')
+    if client_secret != API_SECRET:
+        return jsonify({"error": "Unauthorized: Invalid or missing secret key"}), 401
     
-    # Agar compId va key bo'sh bo'lsa - ommaviy yuklab olishga ruxsat (boshlang'ich o'rnatish uchun)
-    if not comp_id and not key:
-        # Ommaviy download - faqat fayl mavjudligini tekshirish
+    # 2. CompId ni olish (Log uchun)
+    # compId ni query params, form data yoki JSON body dan olishga harakat qilamiz
+    comp_id = request.args.get('compId')
+    if not comp_id:
+        comp_id = request.form.get('compId')
+    if not comp_id:
+        data = request.get_json(silent=True)
+        if data:
+            comp_id = data.get('compId')
+            
+    if not comp_id:
+        comp_id = "UNKNOWN_CLIENT"
+
+    try:
         if not os.path.exists(DATA_FILE):
-            return jsonify({'error': 'DATA fayli topilmadi'}), 404
-        
-        # Download statistikasini saqlash
+             return jsonify({"error": "File not found on server"}), 404
+
+        # Downloadni bazaga yozish
         conn = get_db()
-        conn.execute(
-            'INSERT INTO downloads (computer_id, ip_address) VALUES (?, ?)',
-            ('PUBLIC', request.remote_addr)
+        cursor = conn.cursor()
+        cursor.execute(
+            "INSERT INTO downloads (computer_id, ip_address) VALUES (?, ?)",
+            (comp_id, request.remote_addr)
         )
         conn.commit()
         conn.close()
-        
+
         return send_file(
             DATA_FILE,
             mimetype='application/zip',
             as_attachment=True,
             download_name='data.zip'
         )
-    
-    # Litsenziya bilan download
-    if not comp_id or not key:
-        return jsonify({'error': 'compId va key kerak'}), 400
-    
-    # Litsenziyani tekshirish
-    conn = get_db()
-    license = conn.execute(
-        'SELECT * FROM licenses WHERE computer_id = ? AND license_key = ? AND is_active = 1',
-        (comp_id, key)
-    ).fetchone()
-    conn.close()
-    
-    if not license:
-        return jsonify({'error': 'Litsenziya topilmadi yoki faol emas'}), 403
-    
-    # Muddati tugaganmi?
-    if license['expires_at']:
-        expires = datetime.fromisoformat(license['expires_at'])
-        if datetime.now() > expires:
-            return jsonify({'error': 'Litsenziya muddati tugagan'}), 403
-    
-    # Download statistikasini saqlash
-    conn = get_db()
-    conn.execute(
-        'INSERT INTO downloads (computer_id, ip_address) VALUES (?, ?)',
-        (comp_id, request.remote_addr)
-    )
-    conn.commit()
-    conn.close()
     
     if not os.path.exists(DATA_FILE):
         return jsonify({'error': 'DATA fayli topilmadi'}), 404
